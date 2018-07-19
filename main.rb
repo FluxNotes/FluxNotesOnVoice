@@ -1,10 +1,35 @@
 #!ruby
 
-require_relative "watson4fluxnotes.rb"
+require "trollop"
 
+require_relative "watson4fluxnotes.rb"
+opts = Trollop::options do
+  opt :text, "single string to analyze", :type => :string        # string --text <s>, default nil
+  opt :file, "file containing line-by-line strings to be analyzed", :type => :io
+  opt :output, "destination for analyzed data (default STDOUT)", :type => :string
+end
+
+if opts[:text] && opts[:file]
+  raise "usage error: please use either --text (-t) or --file (-f), not both"
+end
+
+if opts[:text]
+  texts = [opts[:text]]
+elsif opts[:file]
+  #TODO
+  texts = opts[:file].readlines
+end
+
+if opts[:output]
+  out = File.open(opts[:output], 'w') 
+else
+  out = STDOUT
+end
 
 watson = Watson4Fluxnotes.new
 
-watson.analyze_text "and well the I'm sorry to hear that you're having this that you're experiencing this is myalgias in this this this neuropathy chances are on this is a side effect for a toxicity associated with the the the taxol and a tweet we do see this every now and then"
+texts.each do |text|
+  out.puts watson.analyze_text text
+end
 
 

@@ -25,7 +25,7 @@ class Watson4Fluxnotes
     res = Net::HTTP.start(url.host, url.port, :use_ssl => url.scheme == 'https') {|http|
       http.request(req)
     }
-    puts res.body
+    res.body
   end
   
   def construct_data (text, feature_list)
@@ -33,7 +33,8 @@ class Watson4Fluxnotes
     feature_list.each{|f| feature_hash[f] = {}}
     data = {
       "text" => text,
-      "features" => feature_hash
+      "features" => feature_hash,
+      "return_analyzed_text" => true
     }
     return data.to_json
   end
