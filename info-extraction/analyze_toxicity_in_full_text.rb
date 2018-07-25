@@ -13,6 +13,7 @@ opts = Trollop::options do
   opt :output, "destination for analyzed data (default STDOUT)", :type => :string
   opt :outputFormat, "output format; values: spreadsheet", :type => :string, :default => "spreadsheet"
   opt :components, "which analytic components to apply; possible values: watson, meddra", :type => :strings, :default => ["watson"]
+  opt :chunk_context_length, "how many charcters on each side of a keyword do we want the chunker to capture?", :type => :int, :default => 110
   opt :meddra_score_threshold, "only keep disease mentions that score higher than this", :type => :float, :default => 6.5
   opt :third_party_meddra_root_dir, "installation directory of third party component", :type => :string
 end
@@ -34,8 +35,7 @@ else
   out = STDOUT
 end
 
-
-chunker = Chunker.new
+chunker = Chunker.new opts[:chunk_context_length]
 watson = Watson4Fluxnotes.new if opts[:components].include? "watson"
 meddra = Meddra4Fluxnotes.new(opts[:third_party_meddra_root_dir]) if opts[:components].include? "meddra"
 collector = FindingsCollector.new
