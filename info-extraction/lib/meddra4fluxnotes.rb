@@ -1,7 +1,10 @@
 class Meddra4Fluxnotes
+  def initialize (third_party_meddra_root_dir)
+    @third_party_meddra_root_dir = third_party_meddra_root_dir
+  end
   def analyze_text (text, score_threshold)
     # call out to python script which returns the best disease mention candidate for each ngram in the text:
-    concepts =  JSON.parse `echo \"#{text}\" | python #{File.dirname(__FILE__)}/meddra_ngram_lookup.py `# TODO: make this safer. at the moment, we're relying on the fact that ASR output isn't going to contain special execution characters, but it would be better to feed the input string to the python directly
+    concepts =  JSON.parse `echo \"#{text}\" | python #{File.dirname(__FILE__)}/meddra_ngram_lookup.py --fluxnotes_nlp_ensemble_dir=#{@third_party_meddra_root_dir}`# TODO: make this safer. at the moment, we're relying on the fact that ASR output isn't going to contain special execution characters, but it would be better to feed the input string to the python directly
     concepts = filter! concepts, score_threshold
     concepts
   end

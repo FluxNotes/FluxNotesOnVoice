@@ -14,6 +14,7 @@ opts = Trollop::options do
   opt :outputFormat, "output format; values: spreadsheet", :type => :string, :default => "spreadsheet"
   opt :components, "which analytic components to apply; possible values: watson, meddra", :type => :strings, :default => ["watson"]
   opt :meddra_score_threshold, "only keep disease mentions that score higher than this", :type => :float, :default => 6.5
+  opt :third_party_meddra_root_dir, "installation directory of third party component", :type => :string
 end
 
 if opts[:text] && opts[:file]
@@ -36,7 +37,7 @@ end
 
 chunker = Chunker.new
 watson = Watson4Fluxnotes.new if opts[:components].include? "watson"
-meddra = Meddra4Fluxnotes.new if opts[:components].include? "meddra"
+meddra = Meddra4Fluxnotes.new(opts[:third_party_meddra_root_dir]) if opts[:components].include? "meddra"
 collector = FindingsCollector.new
 
 
