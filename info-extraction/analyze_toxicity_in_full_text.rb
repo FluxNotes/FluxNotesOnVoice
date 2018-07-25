@@ -2,10 +2,10 @@
 
 require "trollop"
 
-require_relative "watson4fluxnotes.rb"
-require_relative "meddra4fluxnotes.rb"
-require_relative "chunker.rb"
-require_relative "findings_collector.rb"
+require_relative "lib/watson4fluxnotes.rb"
+require_relative "lib/meddra4fluxnotes.rb"
+require_relative "lib/chunker.rb"
+require_relative "lib/findings_collector.rb"
 
 opts = Trollop::options do
   opt :text, "single string to analyze", :type => :string        # string --text <s>, default nil
