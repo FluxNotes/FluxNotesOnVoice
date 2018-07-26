@@ -17,19 +17,32 @@ class Chunker
         /toxicit(y|ies)/i, #also use global? /g?
         /side effects?/i
       ]
-            
+
+      matches = []
       toxicity_keywords.each do |key| # each keyword is actually a regex pattern
         # consider converting to AnnotatedString and creating a Standoff tag if we want to do more with the keyword position later
-        matches = document.to_enum(:scan, key).map { Regexp.last_match } # this would be just key.match document, but we want MatchData for possible multiple keyword matches, not just one
+        matches += document.to_enum(:scan, key).map { Regexp.last_match } # this would be just key.match document, but we want MatchData for possible multiple keyword matches, not just one
+      end
 
-        # for now, naive chunker just grabs a window of a constant character width centered around each key found
-        # this will almost certainly need to get smarter (by using token, sentence, and speaker boundaries, and/or trained models or syntax)
-        @chunks += matches.map do |m| # we'll probably want to merge overlapping chunks in this block later. if so, add sort_by{|m| m.begin(0)} before the map
-          chunk_start = [0, m.begin(0) - @context_length_left].max # expand chunk to the left from the key. make sure we have a non-negative start position so it doesn't wrap around to the end
-          chunk_end = [document.length, m.end(0) + @context_length_right].min # ditto to the right
-          chunk_length = chunk_end - chunk_start + 1
-          document.slice(chunk_start, chunk_length)
+      # for now, naive chunker just grabs a window of a constant character width centered around each key found
+      # this will almost certainly need to get smarter (by using token, sentence, and speaker boundaries, and/or trained models or syntax)
+      chunk_windows_by_start_and_end_positions = matches.map do |m|
+        chunk_start = [0, m.begin(0) - @context_length_left].max # expand chunk to the left from the key. make sure we have a non-negative start position so it doesn't wrap around to the end
+        chunk_end = [document.length, m.end(0) + @context_length_right].min # ditto to the right
+        [chunk_start, chunk_end]
+      end
+
+      # merge overlapping chunks; the merging iterator relies on the order provided by .sort!
+      chunk_windows_by_start_and_end_positions.sort!
+      chunk_windows_by_start_and_end_positions.each_with_index do |positions, i|
+        chunk_start, chunk_end = positions
+        while i+1 < chunk_windows_by_start_and_end_positions.length && chunk_windows_by_start_and_end_positions[i+1].first < chunk_end
+          chunk_end = chunk_windows_by_start_and_end_positions[i+1].last
+          chunk_windows_by_start_and_end_positions.delete_at i+1
         end
+
+        chunk_length = chunk_end - chunk_start + 1
+        @chunks << document.slice(chunk_start, chunk_length)
       end
     else
       raise "Unknown chunking target: #{target}"
