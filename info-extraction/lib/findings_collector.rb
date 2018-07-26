@@ -2,7 +2,7 @@ class FindingsCollector
   attr_accessor :findings
   def initialize
     @findings = []
-    @key_order = [:text, :analytic_source, :feature, :type, :score, :context]
+    @key_order = [:text, :target_category, :analytic_source, :feature, :type, :score, :context]
   end
   def << (values)
     # values should be a hash including the following (but it's ok to omit things):

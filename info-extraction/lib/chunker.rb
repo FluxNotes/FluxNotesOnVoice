@@ -5,22 +5,32 @@
 
 class Chunker
   attr_accessor :chunks, :context_length_left, :context_length_right
-  def initialize (context_length)
+  def initialize (target, context_length)
+    @target = target # what kinds of chunks are we looking for? :toxicity, :disease_status
     @context_length_left = @context_length_right = context_length # number of characters to each side of keyword we should include in the chunk
     @chunks = []
   end
   
-  def run(document, target)
-    toxicity_keywords = case target
+  def run(document)
+    toxicity_keywords = case @target
                         when :toxicity
                           [
                             /toxicit(y|ies)/i, #also use global? /g?
                             /side effects?/i
                           ]
+                        when :disease_status
+                          [
+                            /status/i,
+                            /progressing/i,
+                            /stable/i,
+                            /getting worse/i,
+                            /worsening/i,
+                            /improving/i,
+                            /getting better/i
+                          ]
                         else
                           raise "Unknown chunking target: #{target}"
                         end
-
     
     matches = []
     toxicity_keywords.each do |key| # each keyword is actually a regex pattern
