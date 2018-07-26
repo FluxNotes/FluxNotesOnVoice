@@ -29,7 +29,8 @@ class Meddra4Fluxnotes
       "Computerised tomogram",
       "Self-medication",
       "Multiple use of single-use product",
-      "Beta-N-acetyl-D-glucosaminidase"
+      "Beta-N-acetyl-D-glucosaminidase",
+      "Blood phospherous"
     ]
     
     if concepts_known_not_to_be_disease.include? concept["term"]

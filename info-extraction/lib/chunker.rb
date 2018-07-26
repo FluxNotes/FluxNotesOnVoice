@@ -7,6 +7,7 @@ class Chunker
   attr_accessor :chunks, :context_length_left, :context_length_right
   def initialize (context_length)
     @context_length_left = @context_length_right = context_length # number of characters to each side of keyword we should include in the chunk
+    @chunks = []
   end
   
   def run(document, target)
@@ -20,20 +21,20 @@ class Chunker
       toxicity_keywords.each do |key| # each keyword is actually a regex pattern
         # consider converting to AnnotatedString and creating a Standoff tag if we want to do more with the keyword position later
         matches = document.to_enum(:scan, key).map { Regexp.last_match } # this would be just key.match document, but we want MatchData for possible multiple keyword matches, not just one
-        
+
         # for now, naive chunker just grabs a window of a constant character width centered around each key found
         # this will almost certainly need to get smarter (by using token, sentence, and speaker boundaries, and/or trained models or syntax)
-        @chunks = matches.map do |m| # we'll probably want to merge overlapping chunks in this block later. if so, add sort_by{|m| m.begin(0)} before the map
+        @chunks += matches.map do |m| # we'll probably want to merge overlapping chunks in this block later. if so, add sort_by{|m| m.begin(0)} before the map
           chunk_start = [0, m.begin(0) - @context_length_left].max # expand chunk to the left from the key. make sure we have a non-negative start position so it doesn't wrap around to the end
           chunk_end = [document.length, m.end(0) + @context_length_right].min # ditto to the right
           chunk_length = chunk_end - chunk_start + 1
           document.slice(chunk_start, chunk_length)
         end
-        @chunks.compact! 
       end
     else
       raise "Unknown chunking target: #{target}"
     end
+    @chunks.compact!
   end
 end
 
