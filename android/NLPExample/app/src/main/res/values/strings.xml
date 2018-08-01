@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">NLP</string>
+    <string name="edit_message">Enter a hostname or ip address</string>
+    <string name="button_send">Request</string>
+</resources>
