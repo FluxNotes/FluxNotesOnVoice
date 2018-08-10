@@ -1,4 +1,4 @@
-# Schedule
+# Tentative schedule
 
 23.JUL.18 (week 1) <br>
 • Kick-off for Flux Notes on Voice <br>
