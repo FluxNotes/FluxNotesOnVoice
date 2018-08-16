@@ -1,6 +1,6 @@
 # Flux Notes on Voice animation
 
-The following is the latest narration/script that will accompany the animation for describing Flux Notes on Voice. Refer to the Flux_Notes_Voice_Storyboard.pdf to view how the script fits into the storyboard. 
+The following is the latest narration/script that will accompany the animation for describing Flux Notes on Voice. The gaps in line spacing represent areas of the animation where there are typically transitions (new picture, callout appears, etc). 
 
 ### Script
 
