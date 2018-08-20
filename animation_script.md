@@ -16,7 +16,7 @@ Our vision of the future encounter is one where our tools don’t overwhelm us w
 
 We want a future where technology pulls structured data from spoken conversation and generates documentation. Freeing the doctor to focus on the patient and their care. 
 
-Flux Notes on Voice is an exploration into the viability of voice capture. We’re building an open source solution with a collaborative open health data standard to engage the whole community. The software will record audio, process it, and infer key data points.  The new data is inserted into the EHR to support clinical research and provide better patient care. 
+Flux Notes on Voice is an exploration into the viability of voice capture. We’re building an open source solution with a collaborative open health data standard to engage the whole community. The software will record audio, process it, and infer key data points.  The structured data is inserted into the EHR to support clinical research and provide better patient care. 
 
 Here’s how a clinician may experience this future. Before meeting with the patient, the doctor opens Flux Notes on Voice to view the patient record. 
 
