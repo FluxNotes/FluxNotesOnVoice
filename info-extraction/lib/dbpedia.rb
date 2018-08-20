@@ -13,7 +13,8 @@ class DBPedia
         uri = URI.parse("http://dbpedia.org/data/#{object}.json")
         response = Net::HTTP.get(uri)
         jsonResponse = JSON.parse(response)
-        @@cache[dbPediaURL] = jsonResponse["http://dbpedia.org/resource/#{object}"]["http://www.w3.org/1999/02/22-rdf-syntax-ns#type"]
-        jsonResponse["http://dbpedia.org/resource/#{object}"]["http://www.w3.org/1999/02/22-rdf-syntax-ns#type"]
+        objectInfo = jsonResponse["http://dbpedia.org/resource/#{object}"] || {}
+        @@cache[dbPediaURL] = objectInfo["http://www.w3.org/1999/02/22-rdf-syntax-ns#type"]
+        objectInfo["http://www.w3.org/1999/02/22-rdf-syntax-ns#type"]
     end    
 end
