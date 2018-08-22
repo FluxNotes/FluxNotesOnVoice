@@ -32,8 +32,18 @@ post '/watson' do
         extractor.analyze_text(chunk)
     end
     content_type :json
+    flux_notes_messages = []
+    diseaseResults.each do |res| 
+        flux_notes_messages << "flux_command('insert-structured-phrase', {phrase:'disease status', fields: [{name:'status', value: '#{res[0]}'}]})"
+    end
+    toxicityResults.each do |tox| 
+        tox['concepts'].each do |concept| 
+            flux_notes_messages << "flux_command('insert-structured-phrase', {phrase:'toxicity', fields: [{name:'adverseEvent', value: '#{concept['text']}'}]})"
+        end
+    end
     return {
         diseaseStatus: diseaseResults,
-        toxicity: toxicityResults
+        toxicity: toxicityResults,
+        fluxCommands: flux_notes_messages.uniq
     }.to_json
 end
