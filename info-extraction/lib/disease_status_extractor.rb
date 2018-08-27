@@ -30,7 +30,7 @@ class DiseaseStatusExtractor
                                           :end => match.end(0) )
     end
 
-    annotated.signal.to_enum(:scan, /(CT scan|imaging|lab)( results)?/).map{ Regexp.last_match }.each do |match|
+    annotated.signal.to_enum(:scan, /((CT scan|imaging|lab|pathology)( results)?)|symptoms?|exam|markers/).map{ Regexp.last_match }.each do |match|
       annotated.tags << Standoff::Tag.new(:content => match[0],
                                           :name => "status_rationale",
                                           :start => match.begin(0),
