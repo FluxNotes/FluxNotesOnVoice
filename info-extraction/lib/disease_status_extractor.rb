@@ -22,7 +22,7 @@ class DiseaseStatusExtractor
                                           :start => match.begin(0),
                                           :end => match.end(0) )
     end
-    
+
     annotated.signal.to_enum(:scan, /(not )?(stable|progressing|getting worse|worsening|getting better|improving)/).map{ Regexp.last_match }.each do |match|
       annotated.tags << Standoff::Tag.new(:content => match[0],
                                           :name => "status_value",
@@ -30,11 +30,25 @@ class DiseaseStatusExtractor
                                           :end => match.end(0) )
     end
 
+    annotated.signal.to_enum(:scan, /(CT scan|imaging|lab)( results)?/).map{ Regexp.last_match }.each do |match|
+      annotated.tags << Standoff::Tag.new(:content => match[0],
+                                          :name => "status_rationale",
+                                          :start => match.begin(0),
+                                          :end => match.end(0) )
+    end
+
+    
+
     disease_status_assertions = []
+
     annotated.tags.select{|tag| tag.name == "disease_status_key"}.each do |key_tag|
       next_tag = annotated.next_tag key_tag
-      if next_tag.name == "status_value"
-        disease_status_assertions << next_tag.content
+      if next_tag && (next_tag.name == "status_value")
+        disease_status_assertions << {
+          :disease => nil,
+          :rationale => annotated.tags.select{|tag| tag.name == "status_rationale"}.map{|tag| tag.content}.uniq,
+          :status => next_tag.content
+        }
       end
     end
 
