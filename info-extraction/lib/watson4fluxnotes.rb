@@ -32,7 +32,6 @@ class Watson4Fluxnotes
     # we only care about entities of type "HealthCondition" (though that may be expanded later)
     results_hash["entities"].select!{|e| e["type"] == "HealthCondition"}
     # and concepts of type "Disease" (though that may be expanded later)
-    #TODO: when we have real DBpedia type checking available, has_relevant_dbpedia_concept_type should be deleted and replaced
     results_hash["concepts"].select!{|c| has_relevant_dbpedia_concept_type c}
     results_hash
   end
@@ -45,35 +44,16 @@ class Watson4Fluxnotes
       "http://umbel.org/umbel/rc/AilmentCondition"
     ]
 
-    
     types = DBPedia.loadDBPediaDataType(concept['dbpedia_resource'])
 
     if types == nil 
       return false
     end
-    # require 'byebug'
-    #     byebug
 
-    if (types.map{|t| t['value']} & types_we_care_about).length == 0
-       return false
-    end
-
-    # this is a manually curated, example-specific list based on checking DBpedia pages. will be replaced with automated DBpedia queries.
-    concepts_known_not_to_be_disease = [
-      "Chemotherapy",
-      "Pharmacology",
-      "2006 albums",
-      "2008 singles",
-      "HIV",
-      "Pain", # probably we want to catch this one. following the rules for now though.
-      "Pharmaceutical drug",
-      "Prescription drug"
-    ]
-    
-    if concepts_known_not_to_be_disease.include? concept["text"]
-      return false
+    if (types.map{|t| t['value']} & types_we_care_about).length > 0
+       return true
     else
-      return true
+      return false
     end
   end
 
