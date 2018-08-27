@@ -1,6 +1,6 @@
 require 'net/http'
 require 'json'
-
+require_relative "dbpedia.rb"
 
 class Watson4Fluxnotes
   
@@ -39,7 +39,25 @@ class Watson4Fluxnotes
 
   def has_relevant_dbpedia_concept_type ( concept )
     # concept should be a ruby hash generated from the json object returned in the watson concept list
+
+    types_we_care_about = [
+      "http://dbpedia.org/ontology/Disease",
+      "http://umbel.org/umbel/rc/AilmentCondition"
+    ]
+
     
+    types = DBPedia.loadDBPediaDataType(concept['dbpedia_resource'])
+
+    if types == nil 
+      return false
+    end
+    # require 'byebug'
+    #     byebug
+
+    if (types.map{|t| t['value']} & types_we_care_about).length == 0
+       return false
+    end
+
     # this is a manually curated, example-specific list based on checking DBpedia pages. will be replaced with automated DBpedia queries.
     concepts_known_not_to_be_disease = [
       "Chemotherapy",
