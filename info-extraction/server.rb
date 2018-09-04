@@ -44,10 +44,6 @@ post '/watson' do
     return {
         diseaseStatus: diseaseResults,
         toxicity: toxicityResults,
-        fluxCommands: [
-            "flux_command('insert-structured-phrase', {phrase:'disease status', fields: [{name:'status', value: 'stable'}]})",
-            "flux_command('insert-structured-phrase', {phrase:'toxicity', fields: [{name:'adverseEvent', value: 'Myalgia'}]})",
-            "flux_command('insert-structured-phrase', {phrase:'toxicity', fields: [{name:'adverseEvent', value: 'Peripheral neuropathy'}]})"
-        ]
+        fluxCommands: flux_notes_messages.uniq
     }.to_json
 end
