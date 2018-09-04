@@ -29,7 +29,8 @@ class Watson4Fluxnotes
     #   results = http.request(req)
     # # }
     # This is NOT a great way to do it, but it should work
-    results = %x{ curl -X POST 'https://gateway.watsonplatform.net/natural-language-understanding/api/v1/analyze?version=2018-03-19' -H 'Authorization: Basic NDNlZDUxOGEtY2E0Ni00NGYxLWJhNWYtNDQyZTYzNmNlOTgyOkRoYzBRc2ppZXlUQg==' -H 'Content-Type: application/json' -F data="#{data}"}
+    text = JSON.parse(data)["text"]
+    results = %x{curl -X GET 'https://gateway.watsonplatform.net/natural-language-understanding/api/v1/analyze?version=2018-03-19&text=#{URI::encode(text)}&features=entities,concepts' -H 'Authorization: Basic NDNlZDUxOGEtY2E0Ni00NGYxLWJhNWYtNDQyZTYzNmNlOTgyOkRoYzBRc2ppZXlUQg=='   -H 'Cache-Control: no-cache'}
 
     filter_to_desired_categories(JSON.parse(results))
   end
