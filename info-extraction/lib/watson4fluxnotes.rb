@@ -1,6 +1,7 @@
 require 'net/http'
 require 'json'
 require_relative "dbpedia.rb"
+# require 'byebug'
 
 class Watson4Fluxnotes
   
@@ -18,14 +19,19 @@ class Watson4Fluxnotes
 
   def api_call_analyze (data)
     # data is expected to be a json hash containing both the text to be analyzed and the desired features, as constructed by #construct_data()
-    url = URI.parse("https://gateway.watsonplatform.net/natural-language-understanding/api/v1/analyze?version=2018-03-19")
-    req = Net::HTTP::Post.new(url.to_s, initheader = {'Content-Type' =>'application/json'})
-    req.body = data
-    req.basic_auth( "43ed518a-ca46-44f1-ba5f-442e636ce982", "Dhc0QsjieyTB")
-    results = Net::HTTP.start(url.host, url.port, :use_ssl => url.scheme == 'https') {|http|
-      http.request(req)
-    }
-    filter_to_desired_categories(JSON.parse(results.body))
+    # url = URI.parse("https://gateway.watsonplatform.net/natural-language-understanding/api/v1/analyze?version=2018-03-19")
+    # http = Net::HTTP.new(url.host, url.port)
+    # http.verify_mode = OpenSSL::SSL::VERIFY_NONE
+    # req = Net::HTTP::Post.new(url.to_s, initheader = {'Content-Type' =>'application/json'})
+    # req.body = data
+    # req.basic_auth( "43ed518a-ca46-44f1-ba5f-442e636ce982", "Dhc0QsjieyTB")
+    # # results = Net::HTTP.start(url.host, url.port, :use_ssl => url.scheme == 'https') {|http|
+    #   results = http.request(req)
+    # # }
+    # This is NOT a great way to do it, but it should work
+    results = %x{ curl -X POST 'https://gateway.watsonplatform.net/natural-language-understanding/api/v1/analyze?version=2018-03-19' -H 'Authorization: Basic NDNlZDUxOGEtY2E0Ni00NGYxLWJhNWYtNDQyZTYzNmNlOTgyOkRoYzBRc2ppZXlUQg==' -H 'Content-Type: application/json' -F data="#{data}"}
+
+    filter_to_desired_categories(JSON.parse(results))
   end
 
   def filter_to_desired_categories (results_hash)
