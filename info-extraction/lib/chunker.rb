@@ -19,14 +19,8 @@ class Chunker
                             /side effects?/i
                           ]
                         when :disease_status
-                          [
-                            /status/i,
-                            /progressing/i,
-                            /stable/i,
-                            /getting worse/i,
-                            /worsening/i,
-                            /improving/i,
-                            /getting better/i
+                          [ # TODO: this is dopey. duplication of search expressions between here and the status_value patterns in DiseaseStatusExtractor should be abstracted and merged.
+                            /((not? )|(complete ))?(stable|progressing|responding|response( to treatment)?|resection|inevaluable|changed?|getting worse|worsening|getting better|improving)/i
                           ]
                         else
                           raise "Unknown chunking target: #{target}"
