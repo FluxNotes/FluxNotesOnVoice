@@ -33,7 +33,7 @@ class DiseaseStatusExtractor
     disease_status_assertions = []
     annotated.tags.select{|tag| tag.name == "disease_status_key"}.each do |key_tag|
       next_tag = annotated.next_tag key_tag
-      if next_tag.name == "status_value"
+      if next_tag && (next_tag.name == "status_value")
         disease_status_assertions << next_tag.content
       end
     end
