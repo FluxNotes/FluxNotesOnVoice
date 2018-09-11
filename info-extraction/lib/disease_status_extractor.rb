@@ -76,7 +76,7 @@ class DiseaseStatusExtractor
                                  else
                                    nil
                                  end
-      normalized = mapped_for_normalization.split(/ |\_/).map(&:capitalize).join(" ") #cap each word
+      normalized = mapped_for_normalization ? mapped_for_normalization.split(/ |\_/).map(&:capitalize).join(" ") : nil#cap each word
       annotated.tags << Standoff::Tag.new(:content => match[0],
                                           :name => "status_value",
                                           :attributes => {:normalized => normalized},
