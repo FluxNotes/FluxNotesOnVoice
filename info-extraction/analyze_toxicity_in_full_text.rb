@@ -1,6 +1,6 @@
 #!ruby
 
-require "trollop"
+require "optimist"
 
 require_relative "lib/watson4fluxnotes.rb"
 require_relative "lib/meddra4fluxnotes.rb"
@@ -8,7 +8,7 @@ require_relative "lib/chunker.rb"
 require_relative "lib/findings_collector.rb"
 require_relative "lib/disease_status_extractor.rb"
 
-opts = Trollop::options do
+opts = Optimist::options do
   opt :text, "single string to analyze", :type => :string        # string --text <s>, default nil
   opt :file, "file containing line-by-line strings to be analyzed", :type => :io
   opt :output, "destination for analyzed data (default STDOUT)", :type => :string
