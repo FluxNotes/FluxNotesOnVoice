@@ -3,7 +3,7 @@ require 'standoff'
 =begin
 This is a really naive information extractor to detect assertions about disease statuses.
 
-All it does is tag mentions of a list of disease-status-related keywords (disease, cancer, status), tag mentions of disease-status-related value words (e.g. stable, improving). For each keyword, it checks the next tag to the right, and if that tag is a status value, it returns the value.
+All it does is tag mentions of a list of disease-status-related keywords (disease, cancer, status), tag mentions of disease-status-related value words (e.g. stable, improving), and tag mentions of rationale concepts (e.g. imaging, scans, symptoms). For each keyword, it checks the next tag to the right, and if that tag is a status value, it returns the value. It also returns and normalizes all rationale mentions found within the chunk along with that status assertion.
 
 So, it will assert "stable" for the phrase "your cancer is stable."
 
