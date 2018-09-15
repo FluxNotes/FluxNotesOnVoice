@@ -33,8 +33,10 @@ post '/watson' do
     end
     content_type :json
     flux_notes_messages = []
-    diseaseResults.each do |res| 
-        flux_notes_messages << "flux_command('insert-structured-phrase', {phrase:'disease status', fields: [{name:'status', value: '#{res[0]}'}]})"
+    diseaseResults.each do |res|
+        res.each do |concept|
+          flux_notes_messages << "flux_command('insert-structured-phrase', {phrase:'disease status', fields: [{name:'status', value: #{concept.to_json}}]})"
+        end
     end
     toxicityResults.each do |tox| 
         tox['concepts'].each do |concept| 
