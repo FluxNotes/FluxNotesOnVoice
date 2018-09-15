@@ -119,6 +119,7 @@ class DiseaseStatusExtractor
                        :normalized => next_tag.attributes[:normalized]}
             
         }
+        disease_status_assertions << next_tag.content
       end
     end
 
