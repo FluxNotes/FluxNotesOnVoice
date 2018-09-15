@@ -92,7 +92,7 @@ class DiseaseStatusExtractor
                                           :end => match.end(0) )
     end
     annotated.signal.to_enum(:scan, /(pathology|symptoms|(physical )?exam|markers)/i).map{ Regexp.last_match }.each do |match|
-      mention_text = m[0]
+      mention_text = match[0]
       mention_text = "physical exam" if mention_text == "exam"
       normalized = mention_text.split(/ |\_/).map(&:capitalize).join(" ") #cap each word
       annotated.tags << Standoff::Tag.new(:content => mention_text,
@@ -119,7 +119,6 @@ class DiseaseStatusExtractor
                        :normalized => next_tag.attributes[:normalized]}
             
         }
-        disease_status_assertions << next_tag.content
       end
     end
 

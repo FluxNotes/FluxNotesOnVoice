@@ -35,14 +35,20 @@ post '/watson' do
     flux_notes_messages = []
     diseaseResults.each do |res|
         res.each do |concept|
-          flux_notes_messages << "flux_command('insert-structured-phrase', {phrase:'disease status', fields: [{name:'status', value: #{concept.to_json}}]})"
+          # build the flux_command for each disease status assertion.
+          # 'status' will have a single value, 'reasons' will have an array of values.
+          # for each of those values, we use the normalized vocabulary term if we have it, or fall back to the surface mention text if we don't
+          flux_notes_messages << "flux_command('insert-structured-phrase', {phrase:'disease status', fields: [{name:'status', value: #{(concept[:status][:normalized] || concept[:status][:mention_text]).to_json}}, {name:'reasons', value: #{concept[:rationale].map{|structured_rationale| structured_rationale[:normalized] || structured_rationale[:mention_text]}.to_json}}]})"
         end
     end
+    
     toxicityResults.each do |tox| 
-        tox['concepts'].each do |concept| 
+        tox['concepts'].each do |concept|
+            #build the flux_command for each toxicity assertion.
             flux_notes_messages << "flux_command('insert-structured-phrase', {phrase:'toxicity', fields: [{name:'adverseEvent', value: '#{concept['text']}'}]})"
         end
     end
+
     return {
         diseaseStatus: diseaseResults,
         toxicity: toxicityResults,
