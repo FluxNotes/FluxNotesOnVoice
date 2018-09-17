@@ -1,12 +1,13 @@
 require 'sinatra'
 require 'json'
-# require 'byebug'
+require 'byebug'
 
 require_relative "lib/watson4fluxnotes.rb"
 require_relative "lib/meddra4fluxnotes.rb"
 require_relative "lib/chunker.rb"
 require_relative "lib/findings_collector.rb"
 require_relative "lib/disease_status_extractor.rb"
+require_relative "lib/fluxnotes_integration.rb"
 
 
 get '/' do 
@@ -35,12 +36,13 @@ post '/watson' do
     flux_notes_messages = []
     diseaseResults.each do |res|
         res.each do |concept|
-          flux_notes_messages << "flux_command('insert-structured-phrase', {phrase:'disease status', fields: [{name:'status', value: #{concept.to_json}}]})"
+          flux_notes_messages << FluxNotes.build_structured_phrase('disease status', [{name: 'status', value: concept[:status][:normalized]}])
         end
     end
     toxicityResults.each do |tox| 
         tox['concepts'].each do |concept| 
-            flux_notes_messages << "flux_command('insert-structured-phrase', {phrase:'toxicity', fields: [{name:'adverseEvent', value: '#{concept['text']}'}]})"
+            flux_notes_messages << FluxNotes.build_structured_phrase('toxicity', [{name: 'adverseEvent', value: concept['text']}])
+            # "flux_command('insert-structured-phrase', {phrase:'toxicity', fields: [{name:'adverseEvent', value: '#{concept['text']}'}]})"
         end
     end
     return {

@@ -1,6 +1,7 @@
 GEM
   remote: https://rubygems.org/
   specs:
+    byebug (10.0.2)
     json (2.1.0)
     mustermann (1.0.2)
     rack (2.0.5)
@@ -19,10 +20,11 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
+  byebug
   json
   sinatra
   standoff
   trollop
 
 BUNDLED WITH
-   1.16.1
+   1.16.4
