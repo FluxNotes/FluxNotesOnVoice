@@ -7,6 +7,7 @@ require_relative "lib/meddra4fluxnotes.rb"
 require_relative "lib/chunker.rb"
 require_relative "lib/findings_collector.rb"
 require_relative "lib/disease_status_extractor.rb"
+require_relative "lib/fluxnotes_integration.rb"
 
 
 get '/' do 
@@ -38,14 +39,23 @@ post '/watson' do
           # build the flux_command for each disease status assertion.
           # 'status' will have a single value, 'reasons' will have an array of values.
           # for each of those values, we use the normalized vocabulary term if we have it, or fall back to the surface mention text if we don't
-          flux_notes_messages << "flux_command('insert-structured-phrase', {phrase:'disease status', fields: [{name:'status', value: '#{concept[:status][:normalized] || concept[:status][:mention_text]}'}, {name:'reasons', value: [#{concept[:rationale].map{|structured_rationale| '\'' + (structured_rationale[:normalized] || structured_rationale[:mention_text]) + '\''}.join(', ')}]}]})"
+          flux_notes_messages << FluxNotes.build_structured_phrase(
+              'disease status',
+              [
+                  {name: 'status', value: concept[:status][:normalized] || concept[:status][:mention_text]},
+                  {name: 'reason', value: concept[:rationale].map{|structured_rationale| structured_rationale[:normalized] || structured_rationale[:mention_text]}.join(", ")}
+              ]
+          )
+    #   {name:'reasons', value: [#{concept[:rationale].map{|structured_rationale| '\'' + (structured_rationale[:normalized] || structured_rationale[:mention_text]) + '\''}.join(', ')}]
+        #   "flux_command('insert-structured-phrase', {phrase:'disease status', fields: [{name:'status', value: '#{concept[:status][:normalized] || concept[:status][:mention_text]}'}, {name:'reasons', value: [#{concept[:rationale].map{|structured_rationale| '\'' + (structured_rationale[:normalized] || structured_rationale[:mention_text]) + '\''}.join(', ')}]}]})"
         end
     end
     
     toxicityResults.each do |tox| 
         tox['concepts'].each do |concept|
             #build the flux_command for each toxicity assertion.
-            flux_notes_messages << "flux_command('insert-structured-phrase', {phrase:'toxicity', fields: [{name:'adverseEvent', value: '#{concept['text']}'}]})"
+            flux_notes_messages << FluxNotes.build_structured_phrase('toxicity', [{name: 'adverseEvent', value: concept['text']}])
+
         end
     end
 

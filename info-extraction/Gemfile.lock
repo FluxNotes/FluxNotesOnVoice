@@ -1,11 +1,16 @@
 GEM
   remote: https://rubygems.org/
   specs:
+    byebug (10.0.2)
     json (2.1.0)
+    minitest (5.11.3)
     mustermann (1.0.2)
+    optimist (3.0.0)
     rack (2.0.5)
     rack-protection (2.0.3)
       rack
+    rack-test (1.1.0)
+      rack (>= 1.0, < 3)
     sinatra (2.0.3)
       mustermann (~> 1.0)
       rack (~> 2.0)
@@ -13,16 +18,18 @@ GEM
       tilt (~> 2.0)
     standoff (0.0.5)
     tilt (2.0.8)
-    trollop (2.1.3)
 
 PLATFORMS
   ruby
 
 DEPENDENCIES
+  byebug
   json
+  minitest
+  optimist
+  rack-test
   sinatra
   standoff
-  trollop
 
 BUNDLED WITH
-   1.16.1
+   1.16.4

@@ -4,5 +4,6 @@ gem 'sinatra'
 gem 'json'
 gem 'optimist'
 gem 'standoff'
-
+gem 'minitest'
+gem 'rack-test'
 # gem 'byebug'
