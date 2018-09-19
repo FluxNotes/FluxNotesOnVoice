@@ -1,5 +1,7 @@
 require File.expand_path '../test_helper.rb', __FILE__
 require 'json'
+require 'execjs'
+require 'byebug'
 
 class HomePageTest < MiniTest::Unit::TestCase
 
@@ -73,10 +75,13 @@ class HomePageTest < MiniTest::Unit::TestCase
       Um,
       "
     }
+    source = "var flux_command = (a,b)=> { return 'command_executed'};"
+    context = ExecJS.compile(source)
     assert last_response.ok?
     res = JSON.parse(last_response.body)
     res["fluxCommands"].each do |com| 
       assert com.instance_of? String
+      assert_equal context.eval(com), 'command_executed'
     end
     assert res["fluxCommands"].length > 0
   end

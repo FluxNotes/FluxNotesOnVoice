@@ -2,6 +2,7 @@ GEM
   remote: https://rubygems.org/
   specs:
     byebug (10.0.2)
+    execjs (2.7.0)
     json (2.1.0)
     minitest (5.11.3)
     mustermann (1.0.2)
@@ -24,6 +25,7 @@ PLATFORMS
 
 DEPENDENCIES
   byebug
+  execjs
   json
   minitest
   optimist
