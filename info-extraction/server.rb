@@ -1,6 +1,7 @@
 require 'sinatra'
 require 'json'
-# require 'byebug'
+require 'active_support/inflector'
+require 'byebug'
 
 require_relative "lib/watson4fluxnotes.rb"
 require_relative "lib/meddra4fluxnotes.rb"
@@ -9,9 +10,38 @@ require_relative "lib/findings_collector.rb"
 require_relative "lib/disease_status_extractor.rb"
 require_relative "lib/fluxnotes_integration.rb"
 
+FHIR_ROOT = 'https://syntheticmass.mitre.org'
 
 get '/' do 
     'Post text to the /watson end point as a "text" param to run watson NLP'
+end
+
+post '/:patient_id/fn' do 
+    featureTypes = {
+        'allergy': "AllergyIntolerance?patient=#{params['patient_id']}",
+        # 'medications': "MedicationDispense?patient=#{params['patient_id']}",
+        'medication': "MedicationDispense?patient=#{params['patient_id']}",
+        'condition': "Condition?patient=#{params['patient_id']}",
+        # 'conditions': "Condition?patient=#{params['patient_id']}",
+        'encounter': "Encounter?patient=#{params['patient_id']}",
+        # 'encounters': "Encounter?patient=#{params['patient_id']}",
+        'observation': "Observation?patient=#{params['patient_id']}",
+        # 'observations': "Observation?patient=#{params['patient_id']}",
+        'everything': "Patient/#{params['patient_id']}/$everything"
+    }
+
+    type_regex = featureTypes.map{|k,_| [k.to_s, k.to_s.pluralize]}.flatten
+
+    text = params['text']
+    # byebug
+    features = text.match("show (#{type_regex.join("|")})")
+    if features
+        # byebug
+        feature_type = featureTypes[features[1].singularize.to_sym]
+        return "#{FHIR_ROOT}/fhir/#{feature_type}"
+    end
+    return {}.to_json
+
 end
 
 post '/watson' do 
