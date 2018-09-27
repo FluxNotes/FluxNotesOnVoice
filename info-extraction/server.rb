@@ -17,7 +17,7 @@ end
 post '/watson' do 
     # Chunk data into multiple lines
     text = params['text']
-    chunkSize = params['chunkSize'] || 110
+    chunkSize = params['chunkSize'] || 150 # expanded from 110 to 150
     chunkerToxicity = Chunker.new :toxicity, chunkSize
     chunkerDiseaseStatus = Chunker.new :disease_status, chunkSize
     watson = Watson4Fluxnotes.new
@@ -34,6 +34,7 @@ post '/watson' do
     end
     content_type :json
     flux_notes_messages = []
+
     diseaseResults.each do |res|
         res.each do |concept|
           # build the flux_command for each disease status assertion.
@@ -50,7 +51,7 @@ post '/watson' do
         #   "flux_command('insert-structured-phrase', {phrase:'disease status', fields: [{name:'status', value: '#{concept[:status][:normalized] || concept[:status][:mention_text]}'}, {name:'reasons', value: [#{concept[:rationale].map{|structured_rationale| '\'' + (structured_rationale[:normalized] || structured_rationale[:mention_text]) + '\''}.join(', ')}]}]})"
         end
     end
-    
+
     toxicityResults.each do |tox| 
         tox['concepts'].each do |concept|
             #build the flux_command for each toxicity assertion.
