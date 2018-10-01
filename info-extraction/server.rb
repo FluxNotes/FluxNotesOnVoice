@@ -19,14 +19,10 @@ end
 post '/:patient_id/fn' do 
     featureTypes = {
         'allergy': "AllergyIntolerance?patient=#{params['patient_id']}",
-        # 'medications': "MedicationDispense?patient=#{params['patient_id']}",
         'medication': "MedicationDispense?patient=#{params['patient_id']}",
         'condition': "Condition?patient=#{params['patient_id']}",
-        # 'conditions': "Condition?patient=#{params['patient_id']}",
         'encounter': "Encounter?patient=#{params['patient_id']}",
-        # 'encounters': "Encounter?patient=#{params['patient_id']}",
         'observation': "Observation?patient=#{params['patient_id']}",
-        # 'observations': "Observation?patient=#{params['patient_id']}",
         'everything': "Patient/#{params['patient_id']}/$everything"
     }
 
@@ -38,7 +34,12 @@ post '/:patient_id/fn' do
     if features
         # byebug
         feature_type = featureTypes[features[1].singularize.to_sym]
-        return "#{FHIR_ROOT}/fhir/#{feature_type}"
+        url = URI.parse("#{FHIR_ROOT}/fhir/#{feature_type}")
+        req = Net::HTTP::Get.new(url.to_s, initheader = {'Content-Type' =>'application/json'})
+        results = Net::HTTP.start(url.host, url.port, :use_ssl => url.scheme == 'https') {|http|
+            http.request(req)
+        }
+        return JSON.parse(results.body).to_json
     end
     return {}.to_json
 
